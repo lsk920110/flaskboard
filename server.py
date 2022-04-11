@@ -14,7 +14,12 @@ topics = [
 ]
 
 
-def template(contents,content):
+def template(contents,content, id=None):#id 기본값 None
+    contextUI = ''    
+    if id != None:
+        contextUI = f'''
+            <li><a href="/update/{id}">update</a></li>
+        '''
     return f'''<!doctype html>
     <html>
         <body>
@@ -22,8 +27,10 @@ def template(contents,content):
             <ol>
                 {contents}
             </ol>
+            {content}
             <ul>
-                <li>{content} <a href="/create/">create</a></li>
+                <li><a href="/create/">create</a></li>
+                {contextUI}
             </ul>
         </body>
     </html>    
@@ -79,6 +86,38 @@ def read(id):
 
 
 
+
+
+
+@app.route('/update/<int:id>/', methods=['GET','POST'])
+def update():
+    if request.method == 'GET':
+        content = '''
+            <form action="/create/" method="POST">
+                <p><input type="text" placeholder="title" name="title"/></p>
+                <p><textarea placeholder="body" name="body"></textarea></p>
+                <p><input type="submit" value="create"/></p>
+            </form>            
+        '''
+    elif request.method == 'POST':
+        global nextId
+        title = request.form['title']
+        body = request.form['body']
+        newTopic = {'id':nextId ,'title':title,'body':body}
+        topics.append(newTopic)
+        url = '/read/'+str(nextId)+'/'
+        nextId +=1
+        return redirect(url)
+
+
+    return template(getContents(),content)
+
+
+
+
+
+
+
 app.run(port=5001 , debug=True) 
 #python server.py 으로 터미널에서 실행
-#debug 모드로 하게 되면 새로고침만 해도 페이지 수정됨
+#debug 모드로 하게 되면 새로고침만 해도 페이지 수정됨    
