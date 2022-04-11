@@ -1,9 +1,11 @@
-from flask import Flask
+from flask import Flask , request ,  redirect
+
 import random
 
 
 app = Flask(__name__)
 
+nextId = 4
 topics = [
     {'id':1,'title':'html','body':'html is...'},
     {'id':2,'title':'css','body':'css is...'},
@@ -41,15 +43,26 @@ def index():
     return template(getContents(), '<h2>Welcome</h2>Hello,WEB')  
     
 
-@app.route('/create/')
+@app.route('/create/', methods=['GET','POST'])
 def create():
-    content = '''
-        <form action="/create/" method="POST">
-            <p><input type="text" placeholder="title" name="title"/></p>
-            <p><textarea placeholder="body" name="body"></textarea></p>
-            <p><input type="submit" value="create"/></p>
-        </form>            
-    '''
+    if request.method == 'GET':
+        content = '''
+            <form action="/create/" method="POST">
+                <p><input type="text" placeholder="title" name="title"/></p>
+                <p><textarea placeholder="body" name="body"></textarea></p>
+                <p><input type="submit" value="create"/></p>
+            </form>            
+        '''
+    elif request.method == 'POST':
+        global nextId
+        title = request.form['title']
+        body = request.form['body']
+        newTopic = {'id':nextId ,'title':title,'body':body}
+        topics.append(newTopic)
+        url = '/read/'+str(nextId)+'/'
+        nextId +=1
+        return redirect(url)
+
 
     return template(getContents(),content)
 
