@@ -1,0 +1,40 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>INDEX</title>
+</head>
+<body>
+<h3>This is index page</h3>
+{{ name }}
+{{ arr }}
+<ol>
+    {% for unit in arr %}
+    <li>{{unit.id  }}</li>
+    <li>{{unit.title}}</li>
+    <li>{{unit.body }}</li>
+    {% endfor %}
+</ol>
+
+{% if arr %}
+배열 길이 :{{arr|length}}
+{% else %}
+배열 없음
+{% endif %}
+<br/>
+{% if emptyArr %}
+배열 길이 :{{emptyArr|length}}
+{% else %}
+배열 없음
+{% endif %}
+
+
+</body>
+<script>
+// var a = "{{name}}"
+// alert(a);
+
+
+</script>
+
+
+</html>

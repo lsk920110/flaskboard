@@ -1,5 +1,5 @@
 from flask import Flask , request ,  redirect
-
+from flask import render_template
 
 
 app = Flask(__name__)
@@ -45,7 +45,17 @@ def getContents():
 
 @app.route('/')
 def index():
-    return template(getContents(), '<h2>Welcome</h2>Hello,WEB')  
+    array = [
+    {'id':1,'title':'html','body':'html is...'},
+    {'id':2,'title':'css','body':'css is...'},
+    {'id':3,'title':'javascript','body':'javascript is...'}
+]
+    emptyArr = []
+    #return template(getContents(), '<h2>Welcome</h2>Hello,WEB')  
+    return render_template('index.html',name='asd',arr=array,emptyArr=emptyArr)
+
+
+
     
 
 @app.route('/create/', methods=['GET','POST'])
