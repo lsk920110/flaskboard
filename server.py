@@ -1,6 +1,5 @@
 from flask import Flask , request ,  redirect
 
-import random
 
 
 app = Flask(__name__)
@@ -45,8 +44,6 @@ def getContents():
 
 @app.route('/')
 def index():
-
-
     return template(getContents(), '<h2>Welcome</h2>Hello,WEB')  
     
 
@@ -60,6 +57,7 @@ def create():
                 <p><input type="submit" value="create"/></p>
             </form>            
         '''
+        return template(getContents(),content)
     elif request.method == 'POST':
         global nextId
         title = request.form['title']
@@ -67,22 +65,21 @@ def create():
         newTopic = {'id':nextId ,'title':title,'body':body}
         topics.append(newTopic)
         url = '/read/'+str(nextId)+'/'
-        nextId +=1
+        nextId = nextId + 1
         return redirect(url)
 
 
-    return template(getContents(),content)
 
 @app.route('/read/<int:id>/')
 def read(id):
-
-    
+    title= ''
+    body = ''    
     for topic in topics:
         if id == topic['id']:
             title = topic['title']
             body = topic['body']
             break
-    return template(getContents(), f'<h2>{title}</h2>{body}')
+    return template(getContents(), f'<h2>{title}</h2>{body}',id)
 
 
 
@@ -90,27 +87,40 @@ def read(id):
 
 
 @app.route('/update/<int:id>/', methods=['GET','POST'])
-def update():
+def update(id):
     if request.method == 'GET':
-        content = '''
-            <form action="/create/" method="POST">
-                <p><input type="text" placeholder="title" name="title"/></p>
-                <p><textarea placeholder="body" name="body"></textarea></p>
-                <p><input type="submit" value="create"/></p>
+        print('수정page'+request.method)
+        title = ''
+        body = ''
+        for topic in topics:
+            if id == topic['id']:
+                title = topic['title']
+                body = topic['body']
+                break
+        content = f'''
+            <form action="/update/{id}/" method="POST">
+                <p><input type="text" placeholder="title" name="title" value="{title}"/></p>
+                <p><textarea placeholder="body" name="body">{body}</textarea></p>
+                <p><input type="submit" value="update"/></p>
             </form>            
         '''
+        return template(getContents(),content)
     elif request.method == 'POST':
+        print('수정기능'+request.method)
+
         global nextId
         title = request.form['title']
         body = request.form['body']
-        newTopic = {'id':nextId ,'title':title,'body':body}
-        topics.append(newTopic)
-        url = '/read/'+str(nextId)+'/'
-        nextId +=1
+        for topic in topics:
+            if id == topic['id']:
+                topic['title'] = title
+                topic['body'] = body
+                break
+        url = '/read/'+str(id)+'/'
         return redirect(url)
 
 
-    return template(getContents(),content)
+
 
 
 
